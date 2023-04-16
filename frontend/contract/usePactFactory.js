@@ -9,7 +9,7 @@ import Web3 from "web3";
 export default function usePactFactory() {
   const { web3, account, sendTx } = useWeb3Context();
   const { resolved, resolvable, balance } = usePactContract();
-  
+
   const eth = new Eth(new Web3.providers.HttpProvider(
     config.provider,
     {
@@ -60,16 +60,16 @@ export default function usePactFactory() {
       const pactFactoryContract = new web3.eth.Contract(
         PactFactoryAbi, config.contracts.pactFactory
       );
-    
-      pactFactoryContract.method.create(commitment, duration,  web3.utils.toWei(sum, "mwei"), leads)
 
-      const tokenContract = new web3.eth.Contract(Erc20Abi, tokenAddress);
-      const func = tokenContract.methods.transfer(
-        toAddress,
-        web3.utils.toWei(amount, "mwei")
+      const func = pactFactoryContract.methods.create(
+        await pactFactoryContract.methods.commit(commitment).call({
+          from: account
+        }),
+        duration,
+        web3.utils.toWei(sum, "mwei"), 
+        leads
       );
       return await sendTx(func);
-      return;
     }
   };
 }
