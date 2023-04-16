@@ -10,3 +10,5 @@ out/
 # Env vars
 .env
 .envrc
+
+node_modules

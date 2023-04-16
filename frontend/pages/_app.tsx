@@ -4,6 +4,7 @@ import { Web3ContextProvider } from "@/context/Web3Context";
 import { ToastContainer } from "react-toastify";
 import Head from "next/head";
 import "react-toastify/dist/ReactToastify.css";
+import 'antd/dist/reset.css';
 import type { AppProps } from "next/app";
 
 function MyApp({ Component, pageProps }: AppProps) {
