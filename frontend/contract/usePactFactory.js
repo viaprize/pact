@@ -61,10 +61,10 @@ export default function usePactFactory() {
         PactFactoryAbi, config.contracts.pactFactory
       );
 
-      const func = pactFactoryContract.method.create(
-        await pactFactoryContract.method.commit(commitment).call({
+      const func = pactFactoryContract.methods.create(
+        await pactFactoryContract.methods.commit(commitment).call({
           from: account
-        }), 
+        }),
         duration,
         web3.utils.toWei(sum, "mwei"), 
         leads
