@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
-import config, { eip1271MagicValue } from "@/config";
 import AppHeader from "@/components/AppHeader";
+import { shortenAddress } from "../context/tools";
 import usePactFactory from "../contract/usePactFactory";
 import { DatePicker } from "antd";
 import cn from "classnames";
@@ -19,7 +19,7 @@ const Home: NextPage = () => {
   const pactFactory = usePactFactory();
 
   const doCreate = async () => {
-    await pactFactory.createPact(terms, endDate, amount, address)
+    await pactFactory.createPact(terms, endDate, amount, address);
     // console.log("aaa", terms, amount, endDate, address);
   };
 
@@ -57,13 +57,12 @@ const Home: NextPage = () => {
   }, [account]);
 
   const getHistoryList = async () => {
-    const res:any = await pactFactory.getAllPacts();
+    const res: any = await pactFactory.getAllPacts();
     setHistoryList(res);
   };
 
   useEffect(() => {
     if (activeTab === 1 && account) {
-      console.log("aaa", account);
       getHistoryList();
     }
   }, [activeTab, account]);
@@ -72,7 +71,7 @@ const Home: NextPage = () => {
     <div>
       <div className="pb-32">
         <AppHeader />
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center h-full max-w-[90%] mx-auto">
           {account ? (
             <>
               <div className="tabs tabs-boxed mb-6">
@@ -170,19 +169,23 @@ const Home: NextPage = () => {
               )}
 
               {activeTab === 1 && (
-                <>
-                  {historyList.map((item, index) => (
+                <div className="max-w-[90%] mx-auto">
+                  {historyList.map((item: any, index) => (
                     <div
-                      className="card w-96 bg-base-100 shadow-xl"
+                      className="card bg-base-100 shadow-xl mb-4"
                       key={index}
                     >
-                      <div className="card-body">
-                        <h2 className="card-title">Card title!</h2>
-                        <p>If a dog chews shoes whose shoes does he choose?</p>
+                      <div className="card-body break-words">
+                        <h2 className="card-title font-mono mb-1 break-words">
+                          {item.address && shortenAddress(item.address, 8)}
+                        </h2>
+                        <div>Balance: {item.balance} ETH</div>
+                        <div>Resolvable: {item.resolvable ? "Yes" : "No"}</div>
+                        <div>Resolved: {item.resolved ? "Yes" : "No"}</div>
                       </div>
                     </div>
                   ))}
-                </>
+                </div>
               )}
             </>
           ) : (

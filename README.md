@@ -104,3 +104,4 @@ Place the config in a JSON file inside of the `deploy-config`
 directory. Pass the path to the desired config file as the first
 argument to `deploy-contract.sh` and that will deploy the mutual
 assurance contract as desired.
+
