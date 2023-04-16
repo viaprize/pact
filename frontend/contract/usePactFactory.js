@@ -14,9 +14,14 @@ export default function usePactFactory() {
   return {
     async getAllPacts() {
       const logs = await web3.eth.getPastLogs({
+        fromBlock: 8106597,
         address: config.contracts.pactFactory,
         topics: [config.eventSignatures.create]
       });
+
+      if(!logs || !logs.length) {
+        return []; 
+      } 
 
       const pactAddresses = logs.map((eventLog) => {
         return AbiCoder.decodeParameter("address", eventLog.data);
@@ -36,8 +41,21 @@ export default function usePactFactory() {
       return pacts;
     },
 
-    async createPact() {
-      //add create logic
+    async createPact(
+      commitment,
+      duration, 
+      sum, 
+      leads 
+    ) {
+      
+      pactFactoryContract.method.create(commitment, duration,  web3.utils.toWei(sum, "mwei"), leads)
+
+      const tokenContract = new web3.eth.Contract(Erc20Abi, tokenAddress);
+      const func = tokenContract.methods.transfer(
+        toAddress,
+        web3.utils.toWei(amount, "mwei")
+      );
+      return await sendTx(func);
       return;
     }
   };
