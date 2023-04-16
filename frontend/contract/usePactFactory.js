@@ -7,9 +7,9 @@ import config from "@/config";
 export default function usePactFactory() {
   const { web3, account, sendTx } = useWeb3Context();
   const { resolved, resolvable, balance } = usePactContract();
-  const pactFactoryContract = new web3.eth.Contract(
-    PactFactoryAbi, config.contracts.pactFactory
-  );
+  // const pactFactoryContract = new web3.eth.Contract(
+  //   PactFactoryAbi, config.contracts.pactFactory
+  // );
 
   return {
     async getAllPacts() {
