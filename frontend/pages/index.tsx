@@ -188,9 +188,9 @@ const Home: NextPage = () => {
                           className="card bg-base-100 shadow-xl mb-4"
                           key={index}
                         >
-                          <div className="card-body break-words">
+                          <div className="card-body w-[560px] break-words">
                             <h2 className="card-title font-mono mb-1 break-words">
-                              {item.address && shortenAddress(item.address, 8)}
+                              {item.address}
                             </h2>
                             <div>Balance: {item.balance} ETH</div>
                             <div>
