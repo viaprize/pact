@@ -5,7 +5,7 @@ import config from "@/config/op-goerli.js";
 import AbiCoder from "web3-eth-abi";
 
 export default function usePactFactory() {
-  const { web3, account } = useWeb3Context();
+  const { web3, account, sendTx } = useWeb3Context();
   const { resolved, resolvable, balance } = usePactContract();
   const pactFactoryContract = new web3.eth.Contract(
     PactFactoryAbi, config.contracts.pactFactory
@@ -22,14 +22,16 @@ export default function usePactFactory() {
         return AbiCoder.decodeParameter("address", eventLog.data);
       });
 
-      return pactAddresses.map((address) => {
-        return {
+      const pacts = [];
+
+      for (const address of pactAddresses) {
+        pacts.push({
           resolved: await resolved(address),
           resolvable: await resolvable(address),
           balance: await balance(address),
           address: address
-        }
-      });
+        });
+      }
     },
 
     async createPact() {
