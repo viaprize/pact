@@ -8,13 +8,16 @@ import { useEffect, useState } from "react";
 
 const Home: NextPage = () => {
   const [amount, setAmount] = useState("");
+  const [terms, setTerms] = useState("");
   const [address, setAddress] = useState([""]);
   const [historyList, setHistoryList] = useState([{ foo: "bar" }]);
   const [activeTab, setActiveTab] = useState(0);
   const [endDate, setEndDate] = useState("");
   const { account, connectWallet }: any = useWeb3Context();
 
-  const doCreate = async () => {};
+  const doCreate = async () => {
+    console.log("aaa", terms, amount, endDate, address);
+  };
 
   const onAddressChange = (index: number, value: string) => {
     setAddress((prev: any) => {
@@ -24,7 +27,7 @@ const Home: NextPage = () => {
   };
 
   const addAddress = () => {
-    setAddress((prev) => {
+    setAddress((prev: string[]) => {
       return [...prev, ""];
     });
   };
@@ -36,6 +39,12 @@ const Home: NextPage = () => {
       arr.splice(index, 1);
       return [...arr];
     });
+  };
+
+  const dateChange = (val: any) => {
+    const timestamp = val.unix();
+    setEndDate(timestamp);
+    // setEndDate(val.unix())
   };
 
   useEffect(() => {
@@ -98,7 +107,7 @@ const Home: NextPage = () => {
                           value={endDate}
                           showTime
                           style={{ height: "48px" }}
-                          onChange={(val: any) => setEndDate(val.unix())}
+                          onChange={(val: any) => dateChange(val)}
                         />
                       </div>
                     </div>
