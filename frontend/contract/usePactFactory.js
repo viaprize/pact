@@ -1,8 +1,8 @@
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import PactFactoryAbi from "./abi/PactFactory.json";
 import usePactContract from "./usePactContract";
-import config from "@/config/op-goerli.js";
 import AbiCoder from "web3-eth-abi";
+import config from "@/config";
 
 export default function usePactFactory() {
   const { web3, account, sendTx } = useWeb3Context();
