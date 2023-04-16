@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
-import config, { eip1271MagicValue } from "@/config";
 import AppHeader from "@/components/AppHeader";
 import { shortenAddress } from "../context/tools";
 import usePactFactory from "../contract/usePactFactory";
@@ -72,7 +71,7 @@ const Home: NextPage = () => {
     <div>
       <div className="pb-32">
         <AppHeader />
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center h-full max-w-[90%] mx-auto">
           {account ? (
             <>
               <div className="tabs tabs-boxed mb-6">
@@ -170,15 +169,15 @@ const Home: NextPage = () => {
               )}
 
               {activeTab === 1 && (
-                <>
+                <div className="max-w-[90%] mx-auto">
                   {historyList.map((item: any, index) => (
                     <div
-                      className="card w-[600px] bg-base-100 shadow-xl mb-4"
+                      className="card bg-base-100 shadow-xl mb-4"
                       key={index}
                     >
                       <div className="card-body break-words">
                         <h2 className="card-title font-mono mb-1 break-words">
-                          {item.address}
+                          {item.address && shortenAddress(item.address, 8)}
                         </h2>
                         <div>Balance: {item.balance} ETH</div>
                         <div>Resolvable: {item.resolvable ? "Yes" : "No"}</div>
@@ -186,7 +185,7 @@ const Home: NextPage = () => {
                       </div>
                     </div>
                   ))}
-                </>
+                </div>
               )}
             </>
           ) : (
