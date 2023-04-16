@@ -173,12 +173,12 @@ const Home: NextPage = () => {
                 <>
                   {historyList.map((item: any, index) => (
                     <div
-                      className="card w-96 bg-base-100 shadow-xl mb-4"
+                      className="card w-[600px] bg-base-100 shadow-xl mb-4"
                       key={index}
                     >
-                      <div className="card-body">
-                        <h2 className="card-title font-mono mb-1">
-                          {shortenAddress(item.address, 10)}
+                      <div className="card-body break-words">
+                        <h2 className="card-title font-mono mb-1 break-words">
+                          {item.address}
                         </h2>
                         <div>Balance: {item.balance} ETH</div>
                         <div>Resolvable: {item.resolvable ? "Yes" : "No"}</div>
