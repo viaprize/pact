@@ -3,6 +3,8 @@ import PactFactoryAbi from "./abi/PactFactory.json";
 import usePactContract from "./usePactContract";
 import AbiCoder from "web3-eth-abi";
 import config from "@/config";
+import Eth from "web3-eth";
+import Web3 from "web3";
 
 export default function usePactFactory() {
   const { web3, account, sendTx } = useWeb3Context();
@@ -10,18 +12,28 @@ export default function usePactFactory() {
   // const pactFactoryContract = new web3.eth.Contract(
   //   PactFactoryAbi, config.contracts.pactFactory
   // );
+  const eth = new Eth(new Web3.providers.HttpProvider(
+    config.provider,
+    {
+      reconnect: {
+        auto: true
+      }
+    }
+  ));
 
   return {
     async getAllPacts() {
-      const logs = await web3.eth.getPastLogs({
+      const logs = await eth.getPastLogs({
         fromBlock: 8106597,
-        address: config.contracts.pactFactory,
-        topics: [config.eventSignatures.create]
+        address: "0x642a7864cBe44ED24D408Cbc38117Cfd6E6D1a95",
+        topics: ["0xe3758539c1bd6726422843471b2886c2d2cefd3b4aead6778386283e20a32a80"]
       });
 
-      if(!logs || !logs.length) {
-        return []; 
-      } 
+      console.log(logs, config.contracts.pactFactory, config.eventSignatures.create);
+
+      if (!logs || !logs.length) {
+        return [];
+      }
 
       const pactAddresses = logs.map((eventLog) => {
         return AbiCoder.decodeParameter("address", eventLog.data);
@@ -43,12 +55,12 @@ export default function usePactFactory() {
 
     async createPact(
       commitment,
-      duration, 
-      sum, 
-      leads 
+      duration,
+      sum,
+      leads
     ) {
-      
-      pactFactoryContract.method.create(commitment, duration,  web3.utils.toWei(sum, "mwei"), leads)
+
+      pactFactoryContract.method.create(commitment, duration, web3.utils.toWei(sum, "mwei"), leads)
 
       const tokenContract = new web3.eth.Contract(Erc20Abi, tokenAddress);
       const func = tokenContract.methods.transfer(
