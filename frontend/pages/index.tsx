@@ -2,14 +2,17 @@ import type { NextPage } from "next";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import AppHeader from "@/components/AppHeader";
 import { shortenAddress } from "../context/tools";
+import { LoadingOutlined } from "@ant-design/icons";
 import usePactFactory from "../contract/usePactFactory";
 import { DatePicker } from "antd";
 import cn from "classnames";
 import { useEffect, useState } from "react";
+import Contribute from "@/components/Contribute";
 
 const Home: NextPage = () => {
   const [amount, setAmount] = useState("");
   const [terms, setTerms] = useState("");
+  const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState([""]);
   const [rawEndDate, setRawEndDate] = useState();
   const [historyList, setHistoryList] = useState([{ foo: "bar" }]);
@@ -57,8 +60,12 @@ const Home: NextPage = () => {
   }, [account]);
 
   const getHistoryList = async () => {
+    console.log("checking");
+    setLoading(true);
     const res: any = await pactFactory.getAllPacts();
+    console.log("111", res);
     setHistoryList(res);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -170,21 +177,38 @@ const Home: NextPage = () => {
 
               {activeTab === 1 && (
                 <div className="max-w-[90%] mx-auto">
-                  {historyList.map((item: any, index) => (
-                    <div
-                      className="card bg-base-100 shadow-xl mb-4"
-                      key={index}
-                    >
-                      <div className="card-body break-words">
-                        <h2 className="card-title font-mono mb-1 break-words">
-                          {item.address && shortenAddress(item.address, 8)}
-                        </h2>
-                        <div>Balance: {item.balance} ETH</div>
-                        <div>Resolvable: {item.resolvable ? "Yes" : "No"}</div>
-                        <div>Resolved: {item.resolved ? "Yes" : "No"}</div>
-                      </div>
+                  {loading ? (
+                    <div className="text-4xl">
+                      <LoadingOutlined />
                     </div>
-                  ))}
+                  ) : (
+                    <>
+                      {historyList.map((item: any, index) => (
+                        <div
+                          className="card bg-base-100 shadow-xl mb-4"
+                          key={index}
+                        >
+                          <div className="card-body break-words">
+                            <h2 className="card-title font-mono mb-1 break-words">
+                              {item.address && shortenAddress(item.address, 8)}
+                            </h2>
+                            <div>Commitment: {item.commitment}</div>
+                            <div>Balance: {item.balance} ETH</div>
+                            <div>
+                              Resolvable: {item.resolvable ? "Yes" : "No"}
+                            </div>
+                            <div>Resolved: {item.resolved ? "Yes" : "No"}</div>
+
+                            <div>
+                              <Contribute
+                                onContributed={() => getHistoryList()}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
                 </div>
               )}
             </>
