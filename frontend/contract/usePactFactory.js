@@ -7,9 +7,6 @@ import config from "@/config";
 export default function usePactFactory() {
   const { web3, account, sendTx } = useWeb3Context();
   const { resolved, resolvable, balance } = usePactContract();
-  // const pactFactoryContract = new web3.eth.Contract(
-  //   PactFactoryAbi, config.contracts.pactFactory
-  // );
 
   return {
     async getAllPacts() {
@@ -47,7 +44,10 @@ export default function usePactFactory() {
       sum, 
       leads 
     ) {
-      
+      const pactFactoryContract = new web3.eth.Contract(
+        PactFactoryAbi, config.contracts.pactFactory
+      );
+    
       pactFactoryContract.method.create(commitment, duration,  web3.utils.toWei(sum, "mwei"), leads)
 
       const tokenContract = new web3.eth.Contract(Erc20Abi, tokenAddress);
