@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import config, { eip1271MagicValue } from "@/config";
 import AppHeader from "@/components/AppHeader";
+import { DatePicker } from "antd";
 import cn from "classnames";
 import { useEffect, useState } from "react";
 
@@ -83,9 +84,7 @@ const Home: NextPage = () => {
                     </div>
 
                     <div className="mb-4">
-                      <h1 className="text-xl mb-2 font-medium">
-                        Amount and date
-                      </h1>
+                      <h1 className="text-xl mb-2 font-medium">Amount</h1>
                       <div className="flex items-center gap-4">
                         <input
                           type="text"
@@ -94,12 +93,12 @@ const Home: NextPage = () => {
                           value={amount}
                           onChange={(e) => setAmount(e.target.value)}
                         />
-                        <input
-                          type="text"
-                          placeholder="Date"
-                          className="input input-bordered"
+
+                        <DatePicker
                           value={endDate}
-                          onChange={(e) => setEndDate(e.target.value)}
+                          showTime
+                          style={{ height: "48px" }}
+                          onChange={(val: any) => setEndDate(val.unix())}
                         />
                       </div>
                     </div>
