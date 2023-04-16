@@ -32,6 +32,8 @@ export default function usePactFactory() {
           address: address
         });
       }
+
+      return pacts;
     },
 
     async createPact() {
