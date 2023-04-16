@@ -65,8 +65,8 @@ export default function usePactFactory() {
         await pactFactoryContract.methods.commit(commitment).call({
           from: account
         }),
-        duration,
-        web3.utils.toWei(sum, "mwei"), 
+        (new web3.utils.BN(duration)),
+        web3.utils.toWei(sum, "wei"), 
         leads
       );
       return await sendTx(func);

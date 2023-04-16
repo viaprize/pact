@@ -4,6 +4,7 @@ import Web3 from "web3";
 import BN from "bignumber.js";
 import useWeb3Modal from "./hooks/useWeb3Modal";
 import { LoadingOutlined } from "@ant-design/icons";
+import config from "@/config";
 
 const scanMapping = {
   56: "https://bscscan.com",
@@ -21,14 +22,14 @@ export const Web3Context = createContext({
   networkId: null,
   blockNumber: null,
   account: null,
-  connectWallet: async () => {},
-  connectSoul: async () => {},
+  connectWallet: async () => { },
+  connectSoul: async () => { },
   getEthBalance: async () => {
     return "";
   },
-  resetWallet: async () => {},
-  estimateGas: async () => {},
-  sendTx: async () => {},
+  resetWallet: async () => { },
+  estimateGas: async () => { },
+  sendTx: async () => { },
   signMessage: async (val) => {
     return "";
   },
@@ -88,6 +89,40 @@ export const Web3ContextProvider = ({
       setnetworkId(await web3Raw.eth.net.getId());
 
       const foo = await web3Raw.eth.getChainId();
+
+      if (foo != config.chainId) {
+        try {
+          await ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: Web3.utils.toHex(config.chainId) }]
+          });
+          console.log(`switched to chainid : ${chainId} succesfully`);
+        } catch (err) {
+          console.log(`error occured while switching chain to chainId ${chainId}, err: ${err.message} code: ${err.code}`);
+          if (err.code === 4902) {
+            try {
+              await ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [
+                  {
+                    chainId: Web3.utils.toHex(config.chainId),
+                    chainName: config.chainName,
+                    nativeCurrency: {
+                      name: "ETHER",
+                      symbol: "ETH", // 2-6 characters long
+                      decimals: 18
+                    },
+                    rpcUrls: [config.provider],
+                    blockExplorerUrls: [config.scanUrl]
+                  }
+                ]
+              });
+            } catch (err) {
+              console.log(`error ocuured while adding new chain with chainId:${networkDetails.chainId}, err: ${err.message}`)
+            }
+          }
+        }
+      }
       // get chain id
       setChainId(foo);
 
