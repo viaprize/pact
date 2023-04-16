@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import config, { eip1271MagicValue } from "@/config";
 import AppHeader from "@/components/AppHeader";
+import usePactFactory from "../contract/usePactFactory";
 import { DatePicker } from "antd";
 import cn from "classnames";
 import { useEffect, useState } from "react";
@@ -10,10 +11,12 @@ const Home: NextPage = () => {
   const [amount, setAmount] = useState("");
   const [terms, setTerms] = useState("");
   const [address, setAddress] = useState([""]);
+  const [rawEndDate, setRawEndDate] = useState();
   const [historyList, setHistoryList] = useState([{ foo: "bar" }]);
   const [activeTab, setActiveTab] = useState(0);
   const [endDate, setEndDate] = useState("");
   const { account, connectWallet }: any = useWeb3Context();
+  const pactFactory = usePactFactory();
 
   const doCreate = async () => {
     console.log("aaa", terms, amount, endDate, address);
@@ -42,6 +45,7 @@ const Home: NextPage = () => {
   };
 
   const dateChange = (val: any) => {
+    setRawEndDate(val);
     const timestamp = val.unix();
     setEndDate(timestamp);
     // setEndDate(val.unix())
@@ -52,6 +56,18 @@ const Home: NextPage = () => {
       return;
     }
   }, [account]);
+
+  const getHistoryList = async () => {
+    const res = await pactFactory.getAllPacts();
+    console.log("rrr", res);
+  };
+
+  useEffect(() => {
+    if (activeTab === 1 && account) {
+      console.log('aaa', account)
+      getHistoryList();
+    }
+  }, [activeTab, account]);
 
   return (
     <div>
@@ -104,7 +120,7 @@ const Home: NextPage = () => {
                         />
 
                         <DatePicker
-                          value={endDate}
+                          value={rawEndDate}
                           showTime
                           style={{ height: "48px" }}
                           onChange={(val: any) => dateChange(val)}
@@ -157,7 +173,15 @@ const Home: NextPage = () => {
               {activeTab === 1 && (
                 <>
                   {historyList.map((item, index) => (
-                    <div key={index}>{item.foo}</div>
+                    <div className="card w-96 bg-base-100 shadow-xl">
+                      <div className="card-body">
+                        <h2 className="card-title">Card title!</h2>
+                        <p>If a dog chews shoes whose shoes does he choose?</p>
+                        <div className="card-actions justify-end">
+                          <button className="btn btn-primary">Buy Now</button>
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </>
               )}
