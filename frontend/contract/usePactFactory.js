@@ -18,8 +18,15 @@ export default function useErc20Contract() {
       const pactAddresses = logs.map((eventLog) => {
         return AbiCoder.decodeParameter("address", eventLog.data);
       });
-
-      return pactAddresses;
+    
+      return pactAddresses.map((address) => {
+        return {
+          resolved: await resolved(address),
+          resolvable: await resolvable(address),
+          balance: await balance(address), 
+          address: address
+        }
+      });
     }
   };
 }
