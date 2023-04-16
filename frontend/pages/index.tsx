@@ -19,7 +19,8 @@ const Home: NextPage = () => {
   const pactFactory = usePactFactory();
 
   const doCreate = async () => {
-    console.log("aaa", terms, amount, endDate, address);
+    await pactFactory.createPact(terms, endDate, amount, address)
+    // console.log("aaa", terms, amount, endDate, address);
   };
 
   const onAddressChange = (index: number, value: string) => {
@@ -36,7 +37,6 @@ const Home: NextPage = () => {
   };
 
   const removeAddress = (index: number) => {
-    console.log("remove index", index);
     setAddress((prev) => {
       const arr = JSON.parse(JSON.stringify(prev));
       arr.splice(index, 1);
@@ -48,7 +48,6 @@ const Home: NextPage = () => {
     setRawEndDate(val);
     const timestamp = val.unix();
     setEndDate(timestamp);
-    // setEndDate(val.unix())
   };
 
   useEffect(() => {
@@ -58,13 +57,13 @@ const Home: NextPage = () => {
   }, [account]);
 
   const getHistoryList = async () => {
-    const res = await pactFactory.getAllPacts();
-    console.log("rrr", res);
+    const res:any = await pactFactory.getAllPacts();
+    setHistoryList(res);
   };
 
   useEffect(() => {
     if (activeTab === 1 && account) {
-      console.log('aaa', account)
+      console.log("aaa", account);
       getHistoryList();
     }
   }, [activeTab, account]);
@@ -173,13 +172,13 @@ const Home: NextPage = () => {
               {activeTab === 1 && (
                 <>
                   {historyList.map((item, index) => (
-                    <div className="card w-96 bg-base-100 shadow-xl">
+                    <div
+                      className="card w-96 bg-base-100 shadow-xl"
+                      key={index}
+                    >
                       <div className="card-body">
                         <h2 className="card-title">Card title!</h2>
                         <p>If a dog chews shoes whose shoes does he choose?</p>
-                        <div className="card-actions justify-end">
-                          <button className="btn btn-primary">Buy Now</button>
-                        </div>
                       </div>
                     </div>
                   ))}
