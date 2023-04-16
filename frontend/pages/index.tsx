@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import config, { eip1271MagicValue } from "@/config";
 import AppHeader from "@/components/AppHeader";
+import { shortenAddress } from "../context/tools";
 import usePactFactory from "../contract/usePactFactory";
 import { DatePicker } from "antd";
 import cn from "classnames";
@@ -19,7 +20,7 @@ const Home: NextPage = () => {
   const pactFactory = usePactFactory();
 
   const doCreate = async () => {
-    await pactFactory.createPact(terms, endDate, amount, address)
+    await pactFactory.createPact(terms, endDate, amount, address);
     // console.log("aaa", terms, amount, endDate, address);
   };
 
@@ -57,13 +58,12 @@ const Home: NextPage = () => {
   }, [account]);
 
   const getHistoryList = async () => {
-    const res:any = await pactFactory.getAllPacts();
+    const res: any = await pactFactory.getAllPacts();
     setHistoryList(res);
   };
 
   useEffect(() => {
     if (activeTab === 1 && account) {
-      console.log("aaa", account);
       getHistoryList();
     }
   }, [activeTab, account]);
@@ -171,14 +171,18 @@ const Home: NextPage = () => {
 
               {activeTab === 1 && (
                 <>
-                  {historyList.map((item, index) => (
+                  {historyList.map((item: any, index) => (
                     <div
-                      className="card w-96 bg-base-100 shadow-xl"
+                      className="card w-96 bg-base-100 shadow-xl mb-4"
                       key={index}
                     >
                       <div className="card-body">
-                        <h2 className="card-title">Card title!</h2>
-                        <p>If a dog chews shoes whose shoes does he choose?</p>
+                        <h2 className="card-title font-mono mb-1">
+                          {shortenAddress(item.address, 10)}
+                        </h2>
+                        <div>Balance: {item.balance} ETH</div>
+                        <div>Resolvable: {item.resolvable ? "Yes" : "No"}</div>
+                        <div>Resolved: {item.resolved ? "Yes" : "No"}</div>
                       </div>
                     </div>
                   ))}
