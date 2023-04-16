@@ -192,7 +192,6 @@ const Home: NextPage = () => {
                             <h2 className="card-title font-mono mb-1 break-words">
                               {item.address && shortenAddress(item.address, 8)}
                             </h2>
-                            <div>Commitment: {item.commitment}</div>
                             <div>Balance: {item.balance} ETH</div>
                             <div>
                               Resolvable: {item.resolvable ? "Yes" : "No"}
