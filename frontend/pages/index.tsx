@@ -198,11 +198,11 @@ const Home: NextPage = () => {
                             </div>
                             <div>Resolved: {item.resolved ? "Yes" : "No"}</div>
 
-                            <div>
+                            {/* <div>
                               <Contribute
                                 onContributed={() => getHistoryList()}
                               />
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       ))}
