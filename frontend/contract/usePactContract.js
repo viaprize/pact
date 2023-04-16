@@ -1,7 +1,7 @@
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import PactABI from "./abi/Pact.json";
 
-export default function useErc20Contract() {
+export default function usePactContract() {
   const { web3, account } = useWeb3Context();
 
   return {
