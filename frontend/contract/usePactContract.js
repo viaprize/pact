@@ -35,6 +35,13 @@ export default function usePactContract() {
       const balance = await eth.getBalance(pactAddress);
 
       return web3.utils.fromWei(balance, 'ether');
+    },
+
+    async commitment(pactAddress) {
+      const pactContract = new eth.Contract(PactABI, pactAddress);
+      return await pactContract.methods
+        .commitment()
+        .call({ from: account });
     }
   };
 }

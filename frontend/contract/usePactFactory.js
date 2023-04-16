@@ -8,7 +8,7 @@ import Web3 from "web3";
 
 export default function usePactFactory() {
   const { web3, account, sendTx } = useWeb3Context();
-  const { resolved, resolvable, balance } = usePactContract();
+  const { resolved, resolvable, balance, commitment } = usePactContract();
 
   const eth = new Eth(new Web3.providers.HttpProvider(
     config.provider,
@@ -44,6 +44,7 @@ export default function usePactFactory() {
           resolved: await resolved(address),
           resolvable: await resolvable(address),
           balance: await balance(address),
+          commitment: await commitment(address),
           address: address
         });
       }
