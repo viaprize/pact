@@ -1,8 +1,8 @@
 export default {
-  provider: "https://goerli-rollup.arbitrum.io/rpc",
-  chainId: 421613,
-  scanUrl: "https://goerli.arbiscan.io/",
+  provider: "https://goerli.optimism.io",
+  chainId: 420,
+  scanUrl: "https://goerli-explorer.optimism.io/",
   contracts: {
-    weth: "0xe34a90dF83c29c28309f58773C41122d4E8C757A"
+    pactFactory: "0x642a7864cBe44ED24D408Cbc38117Cfd6E6D1a95",
   },
 };
