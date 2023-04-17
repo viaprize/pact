@@ -59,11 +59,11 @@ const Home: NextPage = () => {
     }
   }, [account]);
 
-  const getHistoryList = async () => {
-    console.log("checking");
-    setLoading(true);
+  const getHistoryList = async (skipLoading = false) => {
+    if (!skipLoading) {
+      setLoading(true);
+    }
     const res: any = await pactFactory.getAllPacts();
-    console.log("111", res);
     setHistoryList(res);
     setLoading(false);
   };
@@ -84,7 +84,7 @@ const Home: NextPage = () => {
               <div className="tabs tabs-boxed mb-6">
                 <a
                   className={cn(
-                    "tab tab-lifted tab-lg",
+                    "tab tab-boxed tab-lg",
                     activeTab === 0 && "tab-active"
                   )}
                   onClick={() => setActiveTab(0)}
@@ -93,7 +93,7 @@ const Home: NextPage = () => {
                 </a>
                 <a
                   className={cn(
-                    "tab tab-lifted tab-lg",
+                    "tab tab-boxed tab-lg",
                     activeTab === 1 && "tab-active"
                   )}
                   onClick={() => setActiveTab(1)}
@@ -178,7 +178,7 @@ const Home: NextPage = () => {
               {activeTab === 1 && (
                 <div className="max-w-[90%] mx-auto">
                   {loading ? (
-                    <div className="text-4xl">
+                    <div className="text-4xl mt-8">
                       <LoadingOutlined />
                     </div>
                   ) : (
@@ -188,21 +188,23 @@ const Home: NextPage = () => {
                           className="card bg-base-100 shadow-xl mb-4"
                           key={index}
                         >
-                          <div className="card-body w-[560px] break-words">
-                            <h2 className="card-title font-mono mb-1 break-words">
-                              {item.address}
-                            </h2>
+                          <div className="card-body break-words">
+                              <h2 className="card-title font-mono mb-1 break-words tooltip"  data-tip={item.address}>
+                                {item.address &&
+                                  shortenAddress(item.address, 8)}
+                              </h2>
+
                             <div>Balance: {item.balance} ETH</div>
                             <div>
                               Resolvable: {item.resolvable ? "Yes" : "No"}
                             </div>
                             <div>Resolved: {item.resolved ? "Yes" : "No"}</div>
-
-                            {/* <div>
+                            <div>
                               <Contribute
-                                onContributed={() => getHistoryList()}
+                                address={item.address}
+                                onContributed={() => getHistoryList(true)}
                               />
-                            </div> */}
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -213,7 +215,10 @@ const Home: NextPage = () => {
             </>
           ) : (
             <>
-              <a className="btn mb-4 px-6 py-3" onClick={() => connectWallet()}>
+              <a
+                className="btn absolute top-0 bottom-0 m-auto px-6 py-3"
+                onClick={() => connectWallet()}
+              >
                 Connect Wallet
               </a>
             </>
