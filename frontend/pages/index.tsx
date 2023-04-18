@@ -1,29 +1,51 @@
 import type { NextPage } from "next";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import AppHeader from "@/components/AppHeader";
-import { shortenAddress } from "../context/tools";
+import axios from "../lib/axios";
 import { LoadingOutlined } from "@ant-design/icons";
 import usePactFactory from "../contract/usePactFactory";
 import { DatePicker } from "antd";
 import cn from "classnames";
 import { useEffect, useState } from "react";
 import Contribute from "@/components/Contribute";
+import HistoryItem from "@/components/HistoryItem";
+
+const tabs = ["about", "create", "preview"];
 
 const Home: NextPage = () => {
   const [amount, setAmount] = useState("");
   const [terms, setTerms] = useState("");
+  const [projectName, setProjectName] = useState("");
+  const [creating, setCreating] = useState(false);
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState([""]);
   const [rawEndDate, setRawEndDate] = useState();
   const [historyList, setHistoryList] = useState([{ foo: "bar" }]);
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(tabs[0]);
   const [endDate, setEndDate] = useState("");
   const { account, connectWallet }: any = useWeb3Context();
   const pactFactory = usePactFactory();
 
   const doCreate = async () => {
-    await pactFactory.createPact(terms, endDate, amount, address);
-    // console.log("aaa", terms, amount, endDate, address);
+    setCreating(true);
+    try {
+      const res: any = await pactFactory.createPact(
+        terms,
+        endDate,
+        amount,
+        address
+      );
+      console.log("createdddddd", res);
+      await axios.post("/pact", {
+        name: projectName,
+        terms: terms,
+        address: res.events.Create.returnValues[0],
+        transactionHash: res.transactionHash,
+        blockHash: res.blockHash,
+      });
+    } catch (err) {
+      setCreating(false);
+    }
   };
 
   const onAddressChange = (index: number, value: string) => {
@@ -69,7 +91,7 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (activeTab === 1 && account) {
+    if (activeTab === tabs[2] && account) {
       getHistoryList();
     }
   }, [activeTab, account]);
@@ -79,149 +101,172 @@ const Home: NextPage = () => {
       <div className="pb-32">
         <AppHeader />
         <div className="flex flex-col items-center justify-center h-full max-w-[90%] mx-auto">
-          {account ? (
-            <>
-              <div className="tabs tabs-boxed mb-6">
-                <a
-                  className={cn(
-                    "tab tab-boxed tab-lg",
-                    activeTab === 0 && "tab-active"
-                  )}
-                  onClick={() => setActiveTab(0)}
-                >
-                  Create
-                </a>
-                <a
-                  className={cn(
-                    "tab tab-boxed tab-lg",
-                    activeTab === 1 && "tab-active"
-                  )}
-                  onClick={() => setActiveTab(1)}
-                >
-                  Preview
-                </a>
-              </div>
+          <div className="tabs tabs-boxed mb-6">
+            {tabs.map((item: string) => (
+              <a
+                key={item}
+                className={cn(
+                  "tab tab-boxed tab-lg capitalize",
+                  activeTab === item && "tab-active"
+                )}
+                onClick={() => setActiveTab(item)}
+              >
+                {item}
+              </a>
+            ))}
+          </div>
 
-              {activeTab === 0 && (
-                <>
-                  <div className="flex flex-col gap-4 mb-4">
-                    <div className="mb-1">
-                      <h1 className="text-xl mb-1 font-medium">Terms</h1>
-                      <textarea
-                        className="textarea w-full"
-                        placeholder="Terms"
+          {activeTab === tabs[0] && (
+            <div className="max-w-[90%] mx-auto text-xl  p-8 card bg-base-100 shadow-xl text-gray-700">
+              <p className="font-bold">
+                Pactsmith.com is a platform to deploy{" "}
+                <a
+                  target="_blank"
+                  className="underline"
+                  href="https://en.wikipedia.org/wiki/Assurance_contract"
+                >
+                  assurance contracts
+                </a>
+                .
+              </p>
+              <p>To create a pact:</p>
+              <p>1. Name your pact</p>
+              <p>2. Write the terms of your pact</p>
+              <p>3. Set the target funding goal</p>
+              <p>4. Determine a deadline</p>
+              <p>5. Add the wallet addresses of admins</p>
+              <p>
+                If the target goal is met before the deadline, the funds will
+                immediately transfer into a Gnosis wallet which admins control.
+                Admins are responsible to enact the transactions defined in the
+                terms. If the target goal is not met when the deadline is
+                reached, then funds will automatically be refunded to
+                contributors.
+              </p>
+            </div>
+          )}
+
+          {activeTab === tabs[1] && (
+            <>
+              <div className="flex flex-col gap-4 mb-4">
+                <div className="mb-4">
+                  <h1 className="text-xl mb-2 font-medium">Name</h1>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      className="input input-bordered w-full"
+                      value={projectName}
+                      onChange={(e) => setProjectName(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <h1 className="text-xl mb-1 font-medium">Terms</h1>
+                  <textarea
+                    className="textarea w-full input-bordered"
+                    value={terms}
+                    onChange={(e) => setTerms(e.target.value)}
+                    placeholder="Terms"
+                  />
+                </div>
+
+                <div className="mb-4 flex gap-3">
+                  <div>
+                    <h1 className="text-xl mb-2 font-medium">Funding Goal</h1>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="text"
+                        placeholder="Funding Goal"
+                        className="input input-bordered"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
                       />
                     </div>
-
-                    <div className="mb-4">
-                      <h1 className="text-xl mb-2 font-medium">Amount</h1>
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="text"
-                          placeholder="Amount"
-                          className="input input-bordered"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                        />
-
-                        <DatePicker
-                          value={rawEndDate}
-                          showTime
-                          style={{ height: "48px" }}
-                          onChange={(val: any) => dateChange(val)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mb-4">
-                      <h1 className="text-xl mb-2 font-medium">Address</h1>
-
-                      <div className="flex items-center gap-4 flex-col">
-                        {address.map((item, index) => (
-                          <div className="flex w-full gap-2" key={index}>
-                            <input
-                              type="text"
-                              placeholder="Address"
-                              className="input input-bordered w-full"
-                              value={item}
-                              onChange={(e) =>
-                                onAddressChange(index, e.target.value)
-                              }
-                            />
-                            {address.length > 1 && (
-                              <button
-                                className="btn"
-                                onClick={() => removeAddress(index)}
-                              >
-                                Remove
-                              </button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-
-                      <button className="btn mt-4" onClick={addAddress}>
-                        Add more
-                      </button>
-                    </div>
-
-                    <div className="mb-4">
-                      <h1 className="text-xl mb-2 font-medium"></h1>
-                      <a className="btn w-full" onClick={doCreate}>
-                        Create
-                      </a>
+                  </div>
+                  <div>
+                    <h1 className="text-xl mb-2 font-medium">Deadline</h1>
+                    <div className="flex items-center gap-4">
+                      <DatePicker
+                        value={rawEndDate}
+                        showTime
+                        style={{ height: "48px" }}
+                        onChange={(val: any) => dateChange(val)}
+                      />
                     </div>
                   </div>
-                </>
-              )}
+                </div>
 
-              {activeTab === 1 && (
-                <div className="max-w-[90%] mx-auto">
-                  {loading ? (
-                    <div className="text-4xl mt-8">
-                      <LoadingOutlined />
-                    </div>
+                <div>
+                  <h1 className="text-xl mb-2 font-medium">Admin Addresses</h1>
+
+                  <div className="flex items-center gap-4 flex-col">
+                    {address.map((item, index) => (
+                      <div className="flex w-full gap-2" key={index}>
+                        <input
+                          type="text"
+                          placeholder="Address"
+                          className="input input-bordered w-full"
+                          value={item}
+                          onChange={(e) =>
+                            onAddressChange(index, e.target.value)
+                          }
+                        />
+                        {address.length > 1 && (
+                          <button
+                            className="btn"
+                            onClick={() => removeAddress(index)}
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <button className="btn mt-4" onClick={addAddress}>
+                    Add more
+                  </button>
+                </div>
+
+                <div className="mb-4">
+                  {account ? (
+                    <a
+                      className={cn("btn w-full", creating && "loading")}
+                      onClick={doCreate}
+                    >
+                      Create
+                    </a>
                   ) : (
-                    <>
-                      {historyList.map((item: any, index) => (
-                        <div
-                          className="card bg-base-100 shadow-xl mb-4"
-                          key={index}
-                        >
-                          <div className="card-body break-words">
-                              <h2 className="card-title font-mono mb-1 break-words tooltip"  data-tip={item.address}>
-                                {item.address &&
-                                  shortenAddress(item.address, 8)}
-                              </h2>
-
-                            <div>Balance: {item.balance} ETH</div>
-                            <div>
-                              Resolvable: {item.resolvable ? "Yes" : "No"}
-                            </div>
-                            <div>Resolved: {item.resolved ? "Yes" : "No"}</div>
-                            <div>
-                              <Contribute
-                                address={item.address}
-                                onContributed={() => getHistoryList(true)}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </>
+                    <a className={cn("btn w-full")} onClick={connectWallet}>
+                      Connect Wallet
+                    </a>
                   )}
                 </div>
+              </div>
+            </>
+          )}
+
+          {activeTab === tabs[2] && (
+            <div className="max-w-[90%] mx-auto">
+              {loading ? (
+                <div className="text-4xl mt-8">
+                  <LoadingOutlined />
+                </div>
+              ) : (
+                <>
+                  {historyList.map((item: any, index) => (
+                    <HistoryItem
+                      onContributed={() => getHistoryList(true)}
+                      key={index}
+                      item={item}
+                      address={item.address}
+                    />
+                  ))}
+                </>
               )}
-            </>
-          ) : (
-            <>
-              <a
-                className="btn absolute top-0 bottom-0 m-auto px-6 py-3"
-                onClick={() => connectWallet()}
-              >
-                Connect Wallet
-              </a>
-            </>
+            </div>
           )}
         </div>
       </div>

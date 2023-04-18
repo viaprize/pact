@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 
 export default function Contribute({ address, onContributed }: any) {
-  const { web3, account }: any = useWeb3Context();
+  const { web3, account, connectWallet }: any = useWeb3Context();
   const [amount, setAmount] = useState("");
   const doContribute = async () => {
     console.log("params", account, address, web3.utils.toWei(amount, "ether"));
@@ -28,10 +28,15 @@ export default function Contribute({ address, onContributed }: any) {
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
-
-      <button className="btn" onClick={() => doContribute()}>
-        Contribute
-      </button>
+      {account ? (
+        <button className="btn" onClick={() => doContribute()}>
+          Contribute
+        </button>
+      ) : (
+        <button className="btn" onClick={() => connectWallet()}>
+          Connect Wallet
+        </button>
+      )}
     </div>
   );
 }

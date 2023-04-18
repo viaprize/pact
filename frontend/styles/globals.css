@@ -49,8 +49,9 @@ body {
 }
 
 
-.ant-btn {
-  background: #000;
+.ant-btn,
+.tab-active {
+  background: #3d4451 !important;
 }
 
 a {

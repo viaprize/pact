@@ -4,7 +4,7 @@ export const geckoApi = "https://api.coingecko.com/api/v3";
 
 export const officialURL = "https://securecenter-poc.soulwallets.me";
 
-export const backendURL = "https://dev.internalversion.api.soulwallets.me";
+export const backendURL = "https://api.pactsmith.com";
 
 export const socials = {
   discord: "https://discord.org",

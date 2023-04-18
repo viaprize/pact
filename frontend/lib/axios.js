@@ -1,15 +1,10 @@
 import axios from "axios";
-import { backendApi } from "config";
 
 const axio = axios.create({
-  baseURL: backendApi,
+  baseURL: 'https://api.pactsmith.com/api',
 });
 
 axio.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers["X-Authorization"] = token;
-  }
   return config;
 });
 
