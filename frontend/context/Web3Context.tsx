@@ -1,6 +1,7 @@
 import React, { useState, createContext, useCallback } from "react";
 import { toast } from "react-toastify";
 import Web3 from "web3";
+import { ContractSendMethod } from "web3-eth-contract";
 import BN from "bignumber.js";
 import useWeb3Modal from "./hooks/useWeb3Modal";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -30,39 +31,39 @@ export const Web3Context = createContext({
   resetWallet: async () => { },
   estimateGas: async () => { },
   sendTx: async () => { },
-  signMessage: async (val) => {
+  signMessage: async (val: any) => {
     return "";
   },
 });
 
-export const Web3ContextProvider = ({
+export const Web3ContextProvider: React.PropsWithChildren = ({
   // chainId,
   // endpoint,
   children,
 }) => {
   const web3Modal = useWeb3Modal();
-  const [web3, setWeb3] = useState("");
-  const [account, setAccount] = useState("");
-  const [chainId, setChainId] = useState("");
-  const [networkId, setnetworkId] = useState("");
-  const [blockNumber, setBlockNumber] = useState("");
+  const [web3, setWeb3] = useState<Web3|null>(null);
+  const [account, setAccount] = useState<string|null>(null);
+  const [chainId, setChainId] = useState<number|null>(null);
+  const [networkId, setnetworkId] = useState<number|null>(null);
+  const [blockNumber, setBlockNumber] = useState<number|null>(null);
 
   const listenProvider = () => {
-    window.ethereum.on("connect", (data) => {
+    window.ethereum.on("connect", (data: unknown) => {
       console.log("event connect", data);
     });
-    window.ethereum.on("disconnect", (data) => {
+    window.ethereum.on("disconnect", (data: unknown) => {
       console.log("event disconnect", data);
     });
-    window.ethereum.on("close", (data) => {
+    window.ethereum.on("close", (data: unknown) => {
       console.log("close", data);
       resetWallet();
     });
-    window.ethereum.on("accountsChanged", async (accounts) => {
+    window.ethereum.on("accountsChanged", async (accounts: string[]) => {
       console.log("account changed", accounts);
       setAccount(accounts[0]);
     });
-    window.ethereum.on("chainChanged", (chainId) => {
+    window.ethereum.on("chainChanged", (chainId: string) => {
       setChainId(parseInt(chainId, 16));
     });
   };
@@ -92,7 +93,7 @@ export const Web3ContextProvider = ({
 
       if (foo != config.chainId) {
         try {
-          await ethereum.request({
+          await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: Web3.utils.toHex(config.chainId) }]
           });
@@ -101,7 +102,7 @@ export const Web3ContextProvider = ({
           console.log(`error occured while switching chain to chainId ${chainId}, err: ${err.message} code: ${err.code}`);
           if (err.code === 4902) {
             try {
-              await ethereum.request({
+              await window.ethereum.request({
                 method: 'wallet_addEthereumChain',
                 params: [
                   {
@@ -181,7 +182,7 @@ export const Web3ContextProvider = ({
     await web3Modal.clearCachedProvider();
   }, [web3Modal]);
 
-  const estimateGas = async (func, value = 0) => {
+  const estimateGas = async (func: , value = 0) => {
     try {
       const gas = await func.estimateGas({
         from: account,
@@ -195,11 +196,14 @@ export const Web3ContextProvider = ({
     }
   };
 
-  const signMessage = async (message) => {
-    return await web3.eth.personal.sign(message, account);
+  const signMessage = async (message: string) => {
+    return await (web3 as Web3).eth.personal.sign(message, account);
   };
 
-  const goScan = (txnHash) => {
+  const goScan = (txnHash: string) => {
+    if(!chainId) {
+      throw new Error("Wallet not connected.");
+    }
     window.open(`${scanMapping[chainId]}/tx/${txnHash}`);
   };
 
@@ -211,8 +215,12 @@ export const Web3ContextProvider = ({
    * @returns
    */
 
-  const sendTx = async (func, value = 0) => {
+  const sendTx = async (func: ContractSendMethod, value = 0) => {
     const gasLimit = await estimateGas(func, value);
+    if (!gasLimit || !account) {
+      throw new Error("Invalid account or difficulty calculating gasLimit.")
+    };
+
     if (!isNaN(gasLimit)) {
       return func
         .send({
@@ -223,7 +231,7 @@ export const Web3ContextProvider = ({
         .on("transactionHash", (txnHash) => {
           toast.info(actionMapping[0], {
             toastId: txnHash,
-            icon: <LoadingOutlined />,
+            icon: <LoadingOutlined/>,
             autoClose: false,
             onClick: () => goScan(txnHash),
           });

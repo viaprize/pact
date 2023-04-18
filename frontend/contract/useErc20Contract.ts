@@ -6,7 +6,7 @@ export default function useErc20Contract() {
   const { web3, account, sendTx } = useWeb3Context();
 
   return {
-    async allowance(tokenAddress, spenderAddress) {
+    async allowance(tokenAddress: string, spenderAddress: string) {
       const tokenContract = new web3.eth.Contract(Erc20Abi, tokenAddress);
 
       return await tokenContract.methods
@@ -14,7 +14,7 @@ export default function useErc20Contract() {
         .call({ from: account });
     },
 
-    async balanceOf(tokenAddress, decimals = 18) {
+    async balanceOf(tokenAddress: string, decimals = 18) {
       const tokenContract = new web3.eth.Contract(Erc20Abi, tokenAddress);
       const res = await tokenContract.methods
         .balanceOf(account)
