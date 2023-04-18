@@ -28,15 +28,9 @@ export default function Contribute({ address, onContributed }: any) {
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
-      {account ? (
-        <button className="btn" onClick={() => doContribute()}>
-          Contribute
-        </button>
-      ) : (
-        <button className="btn" onClick={() => connectWallet()}>
-          Connect Wallet
-        </button>
-      )}
+      <button className="btn" onClick={() => doContribute()}>
+        Contribute
+      </button>
     </div>
   );
 }

@@ -252,21 +252,29 @@ const Home: NextPage = () => {
 
           {activeTab === tabs[2] && (
             <div className="max-w-[90%] mx-auto">
-              {loading ? (
-                <div className="text-4xl mt-8">
-                  <LoadingOutlined />
-                </div>
-              ) : (
+              {account ? (
                 <>
-                  {historyList.map((item: any, index) => (
-                    <HistoryItem
-                      onContributed={() => getHistoryList(true)}
-                      key={index}
-                      item={item}
-                      address={item.address}
-                    />
-                  ))}
+                  {loading ? (
+                    <div className="text-4xl mt-8">
+                      <LoadingOutlined />
+                    </div>
+                  ) : (
+                    <>
+                      {historyList.map((item: any, index) => (
+                        <HistoryItem
+                          onContributed={() => getHistoryList(true)}
+                          key={index}
+                          item={item}
+                          address={item.address}
+                        />
+                      ))}
+                    </>
+                  )}
                 </>
+              ) : (
+                <a className={cn("btn w-full mt-8")} onClick={connectWallet}>
+                  Connect Wallet
+                </a>
               )}
             </div>
           )}
