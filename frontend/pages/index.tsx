@@ -35,14 +35,13 @@ const Home: NextPage = () => {
         amount,
         address
       );
-      console.log("createdddddd", res);
-      await axios.post("/pact", {
-        name: projectName,
-        terms: terms,
-        address: res.events.Create.returnValues[0],
-        transactionHash: res.transactionHash,
-        blockHash: res.blockHash,
-      });
+      // await axios.post("/pact", {
+      //   name: projectName,
+      //   terms: terms,
+      //   address: res.events.Create.returnValues[0],
+      //   transactionHash: res.transactionHash,
+      //   blockHash: res.blockHash,
+      // });
     } catch (err) {
       setCreating(false);
     }
@@ -174,7 +173,9 @@ const Home: NextPage = () => {
 
                 <div className="mb-4 flex gap-3">
                   <div>
-                    <h1 className="text-xl mb-2 font-medium">Funding Goal</h1>
+                    <h1 className="text-xl mb-2 font-medium">
+                      Funding Goal (in ETH)
+                    </h1>
                     <div className="flex items-center gap-4">
                       <input
                         type="text"

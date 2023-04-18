@@ -15,12 +15,12 @@ export default function HistoryItem({ address, item, onContributed }: any) {
     console.log("111111", res);
   };
 
-  useEffect(() => {
-    if (!address) {
-      return;
-    }
-    getDetail();
-  }, [address]);
+//   useEffect(() => {
+//     if (!address) {
+//       return;
+//     }
+//     getDetail();
+//   }, [address]);
   return (
     <div className="card bg-base-100 shadow-xl mb-4">
       <div className="card-body break-words">
