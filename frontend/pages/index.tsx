@@ -122,6 +122,7 @@ const Home: NextPage = () => {
                 <a
                   target="_blank"
                   className="underline"
+                  rel="noreferrer"
                   href="https://en.wikipedia.org/wiki/Assurance_contract"
                 >
                   assurance contracts

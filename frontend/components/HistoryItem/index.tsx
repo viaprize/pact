@@ -16,6 +16,7 @@ export default function HistoryItem({ address, item, onContributed }: any) {
   };
 
 //   useEffect(() => {
+
 //     if (!address) {
 //       return;
 //     }
@@ -24,7 +25,7 @@ export default function HistoryItem({ address, item, onContributed }: any) {
   return (
     <div className="card bg-base-100 shadow-xl mb-4">
       <div className="card-body break-words">
-        <a href={`${config.scanUrl}/address/${address}`} target="_blank">
+        <a href={`${config.scanUrl}/address/${address}`} rel="noreferrer" target="_blank">
           <h2 className="card-title font-mono mb-1 break-words">{address}</h2>
         </a>
         <div>Balance: {item.balance} ETH</div>
