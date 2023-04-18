@@ -62,6 +62,13 @@ The custodians of the funds if coordination continues. A Gnosis Safe is created 
 the funds are transferred there. The Gnosis Safe has a signing threshold of all of the
 leads. The leads can choose to update this value themselves.
 
+### optimism-mainnet
+
+| Contract | Address | Version |
+| -------- | ------- | ------- |
+| `PactFactory` | [0x642a7864cBe44ED24D408Cbc38117Cfd6E6D1a95](https://optimistic.etherscan.io/address/0x642a7864cBe44ED24D408Cbc38117Cfd6E6D1a95) | `0.2.0` |
+| `Pact` (implementation) | [0x4eE4ff6D24c8D334fA41b560Dac95BB3CEF828a1](https://optimistic.etherscan.io/address/0x4eE4ff6D24c8D334fA41b560Dac95BB3CEF828a1) | `0.2.0` |
+
 ### optimism-goerli
 
 | Contract | Address | Version |
