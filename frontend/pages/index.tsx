@@ -35,13 +35,13 @@ const Home: NextPage = () => {
         amount,
         address
       );
-      // await axios.post("/pact", {
-      //   name: projectName,
-      //   terms: terms,
-      //   address: res.events.Create.returnValues[0],
-      //   transactionHash: res.transactionHash,
-      //   blockHash: res.blockHash,
-      // });
+      await axios.post("/pact", {
+        name: projectName,
+        terms: terms,
+        address: res.events.Create.returnValues[0],
+        transactionHash: res.transactionHash,
+        blockHash: res.blockHash,
+      });
     } catch (err) {
       setCreating(false);
     }
@@ -84,7 +84,9 @@ const Home: NextPage = () => {
     if (!skipLoading) {
       setLoading(true);
     }
-    const res: any = await pactFactory.getAllPacts();
+    const res: any = await axios.get("/pacts");
+    console.log("resul1", res);
+    // const res: any = await pactFactory.getAllPacts();
     setHistoryList(res);
     setLoading(false);
   };
@@ -258,7 +260,7 @@ const Home: NextPage = () => {
                     <div className="text-4xl mt-8">
                       <LoadingOutlined />
                     </div>
-                  ) : (
+                  ) : historyList.length > 0 ? (
                     <>
                       {historyList.map((item: any, index) => (
                         <HistoryItem
@@ -269,6 +271,8 @@ const Home: NextPage = () => {
                         />
                       ))}
                     </>
+                  ) : (
+                    <>Empty.</>
                   )}
                 </>
               ) : (
