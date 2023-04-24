@@ -102,10 +102,10 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (activeTab === tabs[2] && account) {
+    if (activeTab === tabs[2] && account && getHistoryList) {
       getHistoryList();
     }
-  }, [activeTab, account]);
+  }, [activeTab, account, getHistoryList]);
 
   return (
     <div>
