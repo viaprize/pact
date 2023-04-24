@@ -3,7 +3,7 @@ import useWeb3Context from "@/context/hooks/useWeb3Context";
 import { shortenAddress } from "@/context/tools";
 
 export default function AppHeader() {
-  const { account, connectWallet } = useWeb3Context();
+  const { account, connectWallet, resetWallet } = useWeb3Context();
   // temporary solution to skip ts check
   // const address = account || "";
   return (
@@ -11,7 +11,19 @@ export default function AppHeader() {
       <div className="container mx-auto flex items-center justify-between">
         <div className="font-bold text-3xl">PACT</div>
         {account ? (
-          <a className="btn px-3">{shortenAddress(account, 4)}</a>
+          <div className="dropdown dropdown-end">
+            <a className="btn px-3 mb-2" tabIndex={0}>
+              {shortenAddress(account, 4)}
+            </a>
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <a onClick={() => resetWallet()}>Disconnect</a>
+              </li>
+            </ul>
+          </div>
         ) : (
           <a className="btn px-3" onClick={() => connectWallet()}>
             Connect Wallet

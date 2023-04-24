@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { infuraId } from "@/config";
 import WalletConnect from "@walletconnect/web3-provider";
 
 export default function useWeb3Modal() {
@@ -12,15 +12,14 @@ export default function useWeb3Modal() {
           setWeb3Modal(
             new Web3Modal.default({
               cacheProvider: true,
-              theme: "dark",
-              // providerOptions: {
-              //   walletconnect: {
-              //     package: WalletConnect,
-              //     options: {
-              //       infuraId,
-              //     },
-              //   },
-              // },
+              providerOptions: {
+                walletconnect: {
+                  package: WalletConnect,
+                  options: {
+                    infuraId,
+                  },
+                },
+              },
             })
           );
         });

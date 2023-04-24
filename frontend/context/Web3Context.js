@@ -1,4 +1,4 @@
-import React, { useState, createContext, useCallback } from "react";
+import React, { useState, createContext, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import Web3 from "web3";
 import BN from "bignumber.js";
@@ -226,14 +226,13 @@ export const Web3ContextProvider = ({
     }
   };
 
-  // take back this logic when we have soul option on web3modal
-  // useEffect(() => {
-  //   // trigger auto connect
-  //   if (!web3Modal) {
-  //     return;
-  //   }
-  //   connectWallet();
-  // }, [web3Modal]);
+  useEffect(() => {
+    // trigger auto connect
+    if (!web3Modal) {
+      return;
+    }
+    connectWallet();
+  }, [web3Modal]);
 
   return (
     <Web3Context.Provider
