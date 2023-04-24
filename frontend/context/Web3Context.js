@@ -73,7 +73,7 @@ export const Web3ContextProvider = ({
 
       const web3Raw = new Web3(provider);
 
-      const accounts = await window.ethereum.request({
+      const accounts = await provider.request({
         method: "eth_requestAccounts",
       });
 
