@@ -7,7 +7,7 @@ import usePactFactory from "../contract/usePactFactory";
 import { DatePicker } from "antd";
 import cn from "classnames";
 import { useEffect, useState } from "react";
-import Contribute from "@/components/Contribute";
+// import Contribute from "@/components/Contribute";
 import HistoryItem from "@/components/HistoryItem";
 
 const tabs = ["about", "create", "preview"];
@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   const [historyList, setHistoryList] = useState([{ foo: "bar" }]);
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [endDate, setEndDate] = useState("");
-  const { account, connectWallet }: any = useWeb3Context();
+  const { account, connectWallet, web3 }: any = useWeb3Context();
   const pactFactory = usePactFactory();
 
   const doCreate = async () => {
@@ -35,14 +35,19 @@ const Home: NextPage = () => {
         amount,
         address
       );
-      await axios.post("/pact", {
-        name: projectName,
-        terms: terms,
-        address: res.events.Create.returnValues[0],
-        transactionHash: res.transactionHash,
-        blockHash: res.blockHash,
-      });
+      if (res.status) {
+        await axios.post("/pact", {
+          name: projectName,
+          terms: terms,
+          address: res.events.Create.returnValues[0],
+          transactionHash: res.transactionHash,
+          blockHash: res.blockHash,
+        });
+        setActiveTab(tabs[2]);
+      }
     } catch (err) {
+      console.log("err create", err);
+    } finally {
       setCreating(false);
     }
   };
@@ -85,8 +90,13 @@ const Home: NextPage = () => {
       setLoading(true);
     }
     const res: any = await axios.get("/pacts");
-    console.log("resul1", res);
-    // const res: any = await pactFactory.getAllPacts();
+    // get balances
+    for (let i = 0; i < res.length; i++) {
+      res[i].balance = web3.utils.fromWei(
+        await web3.eth.getBalance(res[i].address)
+      );
+      console.log("b", res[i].balance);
+    }
     setHistoryList(res);
     setLoading(false);
   };
@@ -118,7 +128,7 @@ const Home: NextPage = () => {
           </div>
 
           {activeTab === tabs[0] && (
-            <div className="max-w-[90%] mx-auto text-xl  p-8 card bg-base-100 shadow-xl text-gray-700">
+            <div className="max-w-[90%] mx-auto text-xl  p-8 card bg-base-100 shadow-xl text-gray-500">
               <p className="font-bold">
                 Pactsmith.com is a platform to deploy{" "}
                 <a
@@ -219,18 +229,44 @@ const Home: NextPage = () => {
                         />
                         {address.length > 1 && (
                           <button
-                            className="btn"
+                            className="btn btn-square"
                             onClick={() => removeAddress(index)}
                           >
-                            Remove
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="currentColor"
+                              className="w-6 h-6"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
                           </button>
                         )}
                       </div>
                     ))}
                   </div>
 
-                  <button className="btn mt-4" onClick={addAddress}>
-                    Add more
+                  <button className="btn btn-square mt-4" onClick={addAddress}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>
                   </button>
                 </div>
 

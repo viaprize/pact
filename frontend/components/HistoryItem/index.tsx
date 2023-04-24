@@ -1,20 +1,10 @@
-import React, { useEffect } from "react";
-import { shortenAddress } from "@/context/tools";
+import React, { useEffect, useState } from "react";
 import Contribute from "../Contribute";
-import axios from "../../lib/axios";
 import config from "@/config";
 
 export default function HistoryItem({ address, item, onContributed }: any) {
-  const getDetail = async () => {
-    console.log('get 1111')
-    const res = await axios.get("/pact", {
-      params: {
-        address,
-      },
-    });
-
-    console.log("111111", res);
-  };
+  const [detail, setDetail] = useState<any>({});
+  const getDetail = async () => {};
 
   useEffect(() => {
     if (!address) {
@@ -25,18 +15,21 @@ export default function HistoryItem({ address, item, onContributed }: any) {
   return (
     <div className="card bg-base-100 shadow-xl mb-4">
       <div className="card-body break-words">
+        <div className="card-title break-words">{item.name}</div>
+        <div className="mt-1">Terms: {item.terms}</div>
+        <div className="mt-1">Balance: {item.balance} ETH</div>
         <a
-          href={`${config.scanUrl}/address/${address}`}
+          href={`${config.scanUrl}/address/${item.address}`}
           rel="noreferrer"
+          className="font-mono mt-1 underline"
           target="_blank"
         >
-          <h2 className="card-title font-mono mb-1 break-words">{address}</h2>
+          <h2>{item.address}</h2>
         </a>
-        <div>Balance: {item.balance} ETH</div>
-        <div>Resolvable: {item.resolvable ? "Yes" : "No"}</div>
-        <div>Resolved: {item.resolved ? "Yes" : "No"}</div>
+        {/* <div>Resolvable: {item.resolvable ? "Yes" : "No"}</div>
+        <div>Resolved: {item.resolved ? "Yes" : "No"}</div> */}
         <div>
-          <Contribute address={address} onContributed={onContributed} />
+          <Contribute address={item.address} onContributed={onContributed} />
         </div>
       </div>
     </div>

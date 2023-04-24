@@ -22,14 +22,14 @@ export const Web3Context = createContext({
   networkId: null,
   blockNumber: null,
   account: null,
-  connectWallet: async () => { },
-  connectSoul: async () => { },
+  connectWallet: async () => {},
+  connectSoul: async () => {},
   getEthBalance: async () => {
     return "";
   },
-  resetWallet: async () => { },
-  estimateGas: async () => { },
-  sendTx: async () => { },
+  resetWallet: async () => {},
+  estimateGas: async () => {},
+  sendTx: async () => {},
   signMessage: async (val) => {
     return "";
   },
@@ -69,11 +69,9 @@ export const Web3ContextProvider = ({
 
   const connectWallet = useCallback(async () => {
     try {
-      // const provider = await web3Modal.connect();
+      const provider = await web3Modal.connect();
 
-      // const provider = await detectEthereumProvider();
-      const web3Raw = new Web3(window.ethereum);
-      // const web3Raw = new Web3(provider);
+      const web3Raw = new Web3(provider);
 
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -93,16 +91,18 @@ export const Web3ContextProvider = ({
       if (foo != config.chainId) {
         try {
           await ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: Web3.utils.toHex(config.chainId) }]
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: Web3.utils.toHex(config.chainId) }],
           });
           console.log(`switched to chainid : ${chainId} succesfully`);
         } catch (err) {
-          console.log(`error occured while switching chain to chainId ${chainId}, err: ${err.message} code: ${err.code}`);
+          console.log(
+            `error occured while switching chain to chainId ${chainId}, err: ${err.message} code: ${err.code}`
+          );
           if (err.code === 4902) {
             try {
               await ethereum.request({
-                method: 'wallet_addEthereumChain',
+                method: "wallet_addEthereumChain",
                 params: [
                   {
                     chainId: Web3.utils.toHex(config.chainId),
@@ -110,15 +110,17 @@ export const Web3ContextProvider = ({
                     nativeCurrency: {
                       name: "ETHER",
                       symbol: "ETH", // 2-6 characters long
-                      decimals: 18
+                      decimals: 18,
                     },
                     rpcUrls: [config.provider],
-                    blockExplorerUrls: [config.scanUrl]
-                  }
-                ]
+                    blockExplorerUrls: [config.scanUrl],
+                  },
+                ],
               });
             } catch (err) {
-              console.log(`error ocuured while adding new chain with chainId:${networkDetails.chainId}, err: ${err.message}`)
+              console.log(
+                `error ocuured while adding new chain with chainId:${networkDetails.chainId}, err: ${err.message}`
+              );
             }
           }
         }
@@ -139,34 +141,6 @@ export const Web3ContextProvider = ({
       console.log(error);
     }
   }, [web3Modal]);
-
-  const connectSoul = useCallback(async () => {
-    try {
-      if (window.soul.enable) {
-        window.soul.enable();
-      }
-
-      const web3Raw = new Web3(window.soul);
-
-      setWeb3(web3Raw);
-
-      // get account, use this variable to detech if user is connected
-      const accounts = await web3Raw.eth.getAccounts();
-      setAccount(accounts[0]);
-
-      // get network id
-      setnetworkId(await web3Raw.eth.net.getId());
-
-      // get chain id
-      setChainId(await web3Raw.eth.getChainId());
-
-      // init block number
-      setBlockNumber(await web3Raw.eth.getBlockNumber());
-    } catch (error) {
-      // setWeb3(new Web3(endpoint));
-      console.log(error);
-    }
-  }, []);
 
   const getEthBalance = async () => {
     const res = await web3.eth.getBalance(account);
@@ -269,7 +243,6 @@ export const Web3ContextProvider = ({
         networkId,
         account,
         blockNumber,
-        connectSoul,
         connectWallet,
         getEthBalance,
         resetWallet,
